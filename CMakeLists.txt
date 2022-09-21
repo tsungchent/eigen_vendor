@@ -21,6 +21,7 @@ if(USE_SYSTEM_EIGEN STREQUAL "AUTO")
   # We don't use the find_package version checks here because they fail on
   # Ubuntu 16.04, so we'll do it manually.
   find_package(Eigen3 QUIET)
+
   if(EIGEN3_FOUND)
     # Necessary for Ubuntu 16.04's god-awful FindEigen3.cmake.
     if((NOT (DEFINED EIGEN3_VERSION)) AND (DEFINED EIGEN3_VERSION_STRING))
@@ -60,13 +61,13 @@ if(USE_SYSTEM_EIGEN)
 
   # Eigen3 will not be found on Ubuntu 12.04, so we moke it
   if(EIGEN3_FOUND)
-    set(EIGEN_AMENT_EIGEN_INCLUDE ${EIGEN3_INCLUDE_DIR} CACHE INTERNAL "")
+    set(EIGEN_AMENT_EIGEN_INCLUDE ${EIGEN3_INCLUDE_DIR})
     set(EIGEN_NAME "EIGEN3")
   else()
     # Fallback to cmake_modules
     find_package(Eigen REQUIRED)
     if(EIGEN_FOUND)
-      set(EIGEN_AMENT_EIGEN_INCLUDE ${Eigen_INCLUDE_DIRS} CACHE INTERNAL "")
+      set(EIGEN_AMENT_EIGEN_INCLUDE ${Eigen_INCLUDE_DIRS})
       set(EIGEN_NAME "Eigen")
     endif()
   endif()
@@ -77,11 +78,6 @@ if(USE_SYSTEM_EIGEN)
     message(STATUS "Found and using system Eigen in ${EIGEN_AMENT_EIGEN_INCLUDE}")
   else()
     message(FATAL_ERROR "Could not find a system Eigen installation! What about turning on eigen_ament's own Eigen installation by removing USE_SYSTEM_EIGEN.cmake or switching back to the master branch.")
-  endif()
-  
-  if(EIGEN_AMENT_EIGEN_INCLUDE)
-    # message(EIGEN_AMENT_EIGEN_INCLUDE:${EIGEN_AMENT_EIGEN_INCLUDE})
-    set(EIGEN_ROOT_DIR ${EIGEN_AMENT_EIGEN_INCLUDE}/../)
   endif()
 else()
   message(STATUS "eigen_vendor is configured NOT to use system eigen")
@@ -99,11 +95,12 @@ else()
     file(RENAME ${EIGEN_AMENT_EIGEN_INCLUDE_SIGNATURE}.off ${EIGEN_AMENT_EIGEN_INCLUDE_SIGNATURE})
   endif()
 
-  set(EIGEN_ROOT_DIR ${CMAKE_CURRENT_BINARY_DIR}/eigen_install)
-endif()
-
-install(DIRECTORY ${EIGEN_ROOT_DIR}
+  install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/eigen_install/
     DESTINATION ${CMAKE_INSTALL_PREFIX}
-)
+  )
+  install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/eigen_install/
+    DESTINATION ${CMAKE_INSTALL_PREFIX}
+  )
+endif()
 
 ament_package(CONFIG_EXTRAS "cmake/eigen-extras.cmake.in")

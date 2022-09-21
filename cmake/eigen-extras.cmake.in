@@ -1,5 +1,10 @@
 if("@INSTALLSPACE@" STREQUAL "TRUE" AND "@USE_SYSTEM_EIGEN@" STREQUAL "OFF")
   set(@PROJECT_NAME@_INCLUDE_DIRS ${@PROJECT_NAME@_INCLUDE_DIRS}/eigen3)
+  set(EIGEN3_INCLUDE_DIR @PROJECT_NAME@_INCLUDE_DIRS)
+else()
+  set(Eigen3_DIR ${@PROJECT_NAME@_DIR}/../../eigen3/cmake)
+  find_package(Eigen3 CONFIG REQUIRED)
+  set(@PROJECT_NAME@_INCLUDE_DIRS ${EIGEN3_INCLUDE_DIR})
 endif()
 
 # The following eigen_ament_enforce macro can be called in a depending 
